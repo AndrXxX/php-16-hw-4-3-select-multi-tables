@@ -2,3 +2,7 @@
 \.idea/
 
 AddUser
+
+info\.php
+
+DB_test/index\.php

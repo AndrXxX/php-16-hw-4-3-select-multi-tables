@@ -1,10 +1,21 @@
 <?php
-require_once 'core/functions.php';
+require_once 'core/core.php';
 
-if (isPost()) {
+
+/*if (isPost()) {
     if ((getParam('sign_in') && checkForLogin(getParam('login'), getParam('password'))) OR
         (getParam('register') && register(getParam('login'), getParam('password')))) {
             redirect('index');
+    }
+}*/
+
+if (isPost()) {
+    if ((getParam('sign_in') && $user->checkForLogin(getParam('login'), getParam('password'))) OR
+        (getParam('register') && $user->register(getParam('login'), getParam('password')))) {
+        echo 'Authorized!';
+        redirect('index');
+    } else {
+        echo 'Error';
     }
 }
 
@@ -30,8 +41,8 @@ if (isPost()) {
         <h1>Авторизация</h1>
 
         <?php
-            if (!empty(getLoginErrors())):
-                foreach (getLoginErrors() as $error):
+            if (!empty($user->getLoginErrors())):
+                foreach ($user->getLoginErrors() as $error):
         ?>
 
         <p><?= $error ?></p>

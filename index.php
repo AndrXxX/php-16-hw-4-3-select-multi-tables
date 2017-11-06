@@ -1,10 +1,9 @@
 <?php
-require_once 'core/functions.php';
+require_once 'core/core.php';
 
-$currentUser = getCurrentUser();
-if (!$currentUser) {
+if (!$user->getCurrentUser()) {
     /* если пользователь не залогинен - отправляем на страницу register */
-    redirect('register');
+    //redirect('register');
 }
 
 /**
@@ -55,7 +54,7 @@ if (!empty(getValueFromRequest('assigned_user_id'))) {
   <body>
     <header>
       <div class="container">
-        <p class="greet">Здравствуйте, <?= $currentUser['login'] ?>!</p>
+        <p class="greet">Здравствуйте, <?= $user->getCurrentUser('login') ?>!</p>
         <a class="logout" href="./logout.php">Выход</a>
       </div>
     </header>
@@ -93,7 +92,7 @@ if (!empty(getValueFromRequest('assigned_user_id'))) {
           <th>Закрепить задачу за пользователем</th>
         </tr>
 
-        <?php foreach (getOwnerTasks($currentUser['login']) as $task) : ?>
+        <?php foreach (getOwnerTasks($user->getCurrentUser('login')) as $task) : ?>
         <tr>
           <td><?= htmlspecialchars($task['description']) ?></td>
           <td><?= $task['date_added'] ?></td>
@@ -103,7 +102,7 @@ if (!empty(getValueFromRequest('assigned_user_id'))) {
           <td>
             <a href='?id=<?= $task['id'] ?>&action=edit'>Изменить</a>
 
-            <?php if ($task['assigned_user_login'] === $currentUser['login']): ?>
+            <?php if ($task['assigned_user_login'] === $user->getCurrentUser('login')): ?>
               <a href='?id=<?= $task['id'] ?>&action=done'>Выполнить</a>
             <?php endif; ?>
 
@@ -141,7 +140,7 @@ if (!empty(getValueFromRequest('assigned_user_id'))) {
           <th>Автор</th>
         </tr>
 
-        <?php foreach (getOtherTasks($currentUser['login']) as $task) : ?>
+        <?php foreach (getOtherTasks($user->getCurrentUser('login')) as $task) : ?>
         <tr>
           <td><?= htmlspecialchars($task['description']) ?></td>
           <td><?= $task['date_added'] ?></td>
@@ -151,7 +150,7 @@ if (!empty(getValueFromRequest('assigned_user_id'))) {
           <td>
             <a href='?id=<?= $task['id'] ?>&action=edit'>Изменить</a>
 
-            <?php if ($task['assigned_user_login'] === $currentUser['login']): ?>
+            <?php if ($task['assigned_user_login'] === $user->getCurrentUser('login')): ?>
               <a href='?id=<?= $task['id'] ?>&action=done'>Выполнить</a>
             <?php endif; ?>
 

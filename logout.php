@@ -1,3 +1,4 @@
 <?php
-require_once 'core/functions.php';
-logout();
+require_once 'core/core.php';
+
+$user->logout();

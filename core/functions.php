@@ -1,67 +1,4 @@
 <?php
-session_start();
-$homeWorkNum = '4.3';
-$homeWorkCaption = 'SELECT из нескольких таблиц.';
-
-const HOST = 'localhost';
-const DB = 'global';
-const USER = 'andrew';
-const PASS = '2002';
-const TASK_STATE_COMPLETE = 2;
-const TASK_STATE_IN_PROGRESS = 1;
-
-/**
- * Реализует механизм проверок при авторизации
- * @param $login
- * @param $password
- * @return bool
- */
-function checkForLogin($login, $password)
-{
-    $_SESSION['loginErrors'] = [];
-    if (!login($login, $password)) {
-        $_SESSION['loginErrors'][] =
-            'Авторизация не удалась: не найден пользователь, неправильный логин или неправильный пароль';
-        return false;
-    }
-    return true;
-}
-
-function register($login, $password)
-{
-    $_SESSION['loginErrors'] = [];
-    if (!setUser($login, getHash($password))) {
-        $_SESSION['loginErrors'][] = 'Регистрация не удалась: такой пользователь уже есть';
-        return false;
-    }
-    return checkForLogin($login, $password);
-}
-
-/**
- * Реализует механизм авторизации
- * @param $login
- * @param $password
- * @return bool
- */
-function login($login, $password)
-{
-    $user = !empty($login) && !empty($password) ? getUser($login) : null;
-    /* Ищем пользователя по логину */
-    if ($user !== null && $user['password'] === getHash($password)) {
-        $_SESSION['user'] = $user;
-        return true;
-    }
-    return false;
-}
-
-/**
- * Возвращает список ошибок, произошедших во время входа
- * @return mixed
- */
-function getLoginErrors()
-{
-    return $_SESSION['loginErrors'] ?? null;
-}
 
 /**
  * Возвращает подключение к БД
@@ -71,25 +8,13 @@ function getConnection()
 {
     $host = HOST;
     $db = DB;
-    return new PDO(
+    $connect = new PDO(
         "mysql:host=$host;dbname=$db;charset=utf8",
         USER,
         PASS,
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-    );
-}
-
-/**
- * Ищет пользователя по логину
- * @param $login
- * @return mixed|null
- */
-function getUser($login)
-{
-    $sql = "SELECT * FROM user WHERE login = ?";
-    $statement = getConnection()->prepare($sql);
-    $statement->execute([$login]);
-    return $statement->fetch(PDO::FETCH_ASSOC) ?? null;
+    ) or die('Cannot connect to MySQL server :(');
+    return $connect;
 }
 
 /**
@@ -129,19 +54,6 @@ function getParam($name)
 }
 
 /**
- * Возвращает текущего пользователя (если есть) или его параметр при наличии $param
- * @param null $param
- * @return null
- */
-function getCurrentUser($param = null)
-{
-    if (isset($param)) {
-        return $_SESSION['user'][$param] ?? null;
-    }
-    return $_SESSION['user'] ?? null;
-}
-
-/**
  * Отправляет переадресацию на указанную страницу
  * @param $action
  */
@@ -151,14 +63,7 @@ function redirect($action)
     die;
 }
 
-/**
- * Уничтожает сессию и переадресует на страницу входа
- */
-function logout()
-{
-    session_destroy();
-    redirect('register');
-}
+
 
 /**
  * Возвращает хеш md5 от полученного параметра
