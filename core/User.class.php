@@ -13,6 +13,36 @@ class User
     }
 
     /**
+     * Ищет пользователя по логину
+     * @param $login
+     * @return mixed|null
+     */
+    protected function getUser($login)
+    {
+        $sql = "SELECT * FROM user WHERE login = ? LIMIT 1";
+        $statement = getConnection()->prepare($sql);
+        $statement->execute([$login]);
+        return $statement->fetch(PDO::FETCH_ASSOC) ?? null;
+    }
+
+    /**
+     * Добавляет пользователя в БД (если пользователя с таким именем в базе нет)
+     * @param $login
+     * @param $password
+     * @return bool
+     */
+    function setUser($login, $password)
+    {
+        if ($this->getUser($login)) {
+            return false;
+        }
+        $sqlAdd = "INSERT INTO user (login, password) VALUES (?, ?)";
+        $statement = getConnection()->prepare($sqlAdd);
+        $statement->execute([$login, $password]);
+        return true;
+    }
+
+    /**
      * Реализует механизм регистрации и последующей авторизации
      * @param $login
      * @param $password
@@ -72,36 +102,6 @@ class User
             return true;
         }
         return false;
-    }
-
-    /**
-     * Ищет пользователя по логину
-     * @param $login
-     * @return mixed|null
-     */
-    protected function getUser($login)
-    {
-        $sql = "SELECT * FROM user WHERE login = ? LIMIT 1";
-        $statement = getConnection()->prepare($sql);
-        $statement->execute([$login]);
-        return $statement->fetch(PDO::FETCH_ASSOC) ?? null;
-    }
-
-    /**
-     * Добавляет пользователя в БД (если пользователя с таким именем в базе нет)
-     * @param $login
-     * @param $password
-     * @return bool
-     */
-    function setUser($login, $password)
-    {
-        if ($this->getUser($login)) {
-            return false;
-        }
-        $sqlAdd = "INSERT INTO user (login, password) VALUES (?, ?)";
-        $statement = getConnection()->prepare($sqlAdd);
-        $statement->execute([$login, $password]);
-        return true;
     }
 
     /**
