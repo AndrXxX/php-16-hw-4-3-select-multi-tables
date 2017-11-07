@@ -1,21 +1,19 @@
 <?php
 require_once 'core/core.php';
 
+if ($user->getCurrentUser()) {
+    /* если пользователь залогинен - отправляем на страницу index */
+    redirect('index');
+}
 
-/*if (isPost()) {
-    if ((getParam('sign_in') && checkForLogin(getParam('login'), getParam('password'))) OR
-        (getParam('register') && register(getParam('login'), getParam('password')))) {
-            redirect('index');
-    }
-}*/
-
+/**
+ * Выполняем авторизацию или регистрацию
+ */
 if (isPost()) {
     if ((getParam('sign_in') && $user->checkForLogin(getParam('login'), getParam('password'))) OR
         (getParam('register') && $user->register(getParam('login'), getParam('password')))) {
         echo 'Authorized!';
         redirect('index');
-    } else {
-        echo 'Error';
     }
 }
 
@@ -41,15 +39,14 @@ if (isPost()) {
         <h1>Авторизация</h1>
 
         <?php
-            if (!empty($user->getLoginErrors())):
-                foreach ($user->getLoginErrors() as $error):
-        ?>
-
-        <p><?= $error ?></p>
-
-        <?php
-                endforeach;
-            endif;
+        /**
+         * Выводим ошибки при их наличии
+         */
+        if (!empty($user->getLoginErrors())) {
+            foreach ($user->getLoginErrors() as $error) {
+                echo "<p>$error</p>";
+            }
+        }
         ?>
 
         <form class="form" method="POST" id="login-form">
