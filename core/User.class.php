@@ -1,5 +1,4 @@
 <?php
-//require_once '../core/functions.php';
 
 class User
 {
