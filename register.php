@@ -12,7 +12,6 @@ if ($user->getCurrentUser()) {
 if (isPost()) {
     if ((getParam('sign_in') && $user->checkForLogin(getParam('login'), getParam('password'))) OR
         (getParam('register') && $user->register(getParam('login'), getParam('password')))) {
-        echo 'Authorized!';
         redirect('index');
     }
 }
