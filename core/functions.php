@@ -45,13 +45,3 @@ function redirect($action)
     header('Location: ' . $action . '.php');
     die;
 }
-
-/**
- * Возвращает содержимое $_REQUEST[$fieldName] или пустую строку
- * @param $fieldName
- * @return string
- */
-function getValueFromRequest($fieldName)
-{
-    return $_REQUEST[$fieldName] ?? '';
-}

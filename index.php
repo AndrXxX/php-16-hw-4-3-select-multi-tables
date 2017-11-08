@@ -9,34 +9,34 @@ if (!$user->getCurrentUser()) {
 /**
  * Действия при нажатии Добавить.
  */
-if (!empty(getValueFromRequest('description')) && empty(getValueFromRequest('action'))) {
-    $user->changeTask(0, 'add', getValueFromRequest('description'));
+if (!empty(getParam('description')) && empty(getParam('action'))) {
+    $user->changeTask(0, 'add', getParam('description'));
 }
 
 /**
  * Устанавливаем тип сортировки задач
  */
-if (!empty(getValueFromRequest('sort_by'))) {
-    $user->setSortType(getValueFromRequest('sort_by'));
+if (!empty(getParam('sort_by'))) {
+    $user->setSortType(getParam('sort_by'));
 }
 
 /**
  * Действия, если была нажата одна из ссылок - Изменить, Выполнить или Удалить
  */
-if (!empty(getValueFromRequest('id')) && !empty(getValueFromRequest('action'))) {
+if (!empty(getParam('id')) && !empty(getParam('action'))) {
     $user->changeTask(
-        (int)getValueFromRequest('id'),
-        getValueFromRequest('action'),
-        getValueFromRequest('description')
+        (int)getParam('id'),
+        getParam('action'),
+        getParam('description')
     );
 }
 
 /**
  * Действия при нажатии Переложить ответственность
  */
-if (!empty(getValueFromRequest('assigned_user_id'))) {
+if (!empty(getParam('assigned_user_id'))) {
     /* формат assigned_user_id - user_x-task_y */
-    $str = explode('-', getValueFromRequest('assigned_user_id'));
+    $str = explode('-', getParam('assigned_user_id'));
     $assigned_user_id = (int)str_replace('user_', '', $str[0]);
     $taskID = (int)str_replace('task_', '', $str[1]);
     $user->changeTask($taskID, 'set_assigned_user', null, $assigned_user_id);
@@ -63,10 +63,10 @@ if (!empty(getValueFromRequest('assigned_user_id'))) {
 
       <form class="form" method="POST">
         <input type="text" name="description" placeholder="Описание задачи"
-               value="<?= getValueFromRequest('action') === 'edit' ?
-                   $user->getDescriptionForTask((int)getValueFromRequest('id')) : '' ?>"/>
+               value="<?= getParam('action') === 'edit' ?
+                   $user->getDescriptionForTask((int)getParam('id')) : '' ?>"/>
         <input type="submit" name="save"
-               value="<?= getValueFromRequest('action') === 'edit' ? 'Сохранить' : 'Добавить' ?>"/>
+               value="<?= getParam('action') === 'edit' ? 'Сохранить' : 'Добавить' ?>"/>
       </form>
 
       <form class="form" method="POST">
